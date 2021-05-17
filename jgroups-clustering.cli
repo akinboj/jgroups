@@ -19,7 +19,6 @@ batch
 /subsystem=jgroups/channel=ee:write-attribute(name=stack, value=tcp)
 /subsystem=jgroups/stack=udp:remove()
 /subsystem=jgroups/stack=tcp:remove()
-/socket-binding-group=standard-sockets/socket-binding=jgroups-mping:remove()
 /socket-binding-group=standard-sockets/socket-binding=jgroups-udp:remove()
 /socket-binding-group=standard-sockets/socket-binding=jgroups-udp-fd:remove()
 
