@@ -28,6 +28,7 @@ batch
 /interface=private:undefine-attribute(name=inet-address)
 /subsystem=jgroups/stack=tcp:add()
 /subsystem=jgroups/stack=tcp/transport=TCP:add(socket-binding="jgroups-tcp")
+/subsystem=jgroups/stack=tcp/socket-protocol=MPING:add(socket-binding="jgroups-mping")
 /subsystem=jgroups/stack=tcp/transport=TCP/property=bind_addr :add(value="match-interface:enp0s8")
 /subsystem=jgroups/stack=tcp/transport=TCP/property=bind_port :add(value="7800")
 /subsystem=jgroups/stack=tcp/transport=TCP/property=recv_buf_size :add(value="5M")
