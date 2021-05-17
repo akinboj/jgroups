@@ -43,7 +43,7 @@ systemctl start wildfly
 systemctl enable wildfly
 echo "Allow traffic on port 8080"
 ufw allow 8080/tcp
-ufw allow 7600:7610/tcp
+ufw allow 7600/tcp
 
 echo "Create a WildFly Administrator" 
 
