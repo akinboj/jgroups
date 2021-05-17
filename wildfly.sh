@@ -17,19 +17,27 @@ echo $PATH
 echo java -version
 
 echo "Create a user and group for WildFly"
-groupadd -r wildfly
-useradd -r -g wildfly -d /opt/wildfly -s /sbin/nologin wildfly
+groupadd -r jboss
+useradd -r -g jboss -d ${HOME}/wildfly -s /sbin/nologin jboss
 
-Version_Number=20.0.1.Final
-wget https://download.jboss.org/wildfly/$Version_Number/wildfly-$Version_Number.tar.gz -P /tmp
-tar xf /tmp/wildfly-$Version_Number.tar.gz -C /opt/
-ln -s /opt/wildfly-$Version_Number /opt/wildfly
-chown -RH wildfly: /opt/wildfly
+
+WILDFLY_VERSION=20.0.1.Final
+WILDFLY_SHA1=95366b4a0c8f2e6e74e3e4000a98371046c83eeb
+JBOSS_HOME=${HOME}/wildfly
+cd $HOME \
+    && wget -O wildfly-$WILDFLY_VERSION.tar.gz https://download.jboss.org/wildfly/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSION.tar.gz \
+    && sha1sum wildfly-$WILDFLY_VERSION.tar.gz | grep $WILDFLY_SHA1 \
+    && tar xf wildfly-$WILDFLY_VERSION.tar.gz \
+    && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
+    && rm wildfly-$WILDFLY_VERSION.tar.gz \
+    && chown -R jboss:0 ${HOME} \
+    && chmod -R g+rw ${HOME}
+	
 mkdir -p /etc/wildfly
-cp /opt/wildfly/docs/contrib/scripts/systemd/wildfly.conf /etc/wildfly/
-cp /opt/wildfly/docs/contrib/scripts/systemd/launch.sh /opt/wildfly/bin/
-sh -c 'chmod +x /opt/wildfly/bin/*.sh'
-cp /opt/wildfly/docs/contrib/scripts/systemd/wildfly.service /etc/systemd/system/
+cp ${HOME}/wildfly/docs/contrib/scripts/systemd/wildfly.conf /etc/wildfly/
+cp ${HOME}/wildfly/docs/contrib/scripts/systemd/launch.sh ${HOME}/wildfly/bin/
+sh -c 'chmod +x ${HOME}/wildfly/bin/*.sh'
+cp ${HOME}/wildfly/docs/contrib/scripts/systemd/wildfly.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl start wildfly
 systemctl enable wildfly
@@ -41,31 +49,36 @@ echo "Create a WildFly Administrator"
 # Declare some variables
 WILDFLY_MANAGEMENT_USER=pegacorn
 WILDFLY_MANAGEMENT_PASSWORD=jgroups!
-JBOSS_HOME=/opt/wildfly
-WILDFLY_LOG_LEVEL=DEBUG
-wildfly_runner=( /opt/wildfly/bin/standalone.sh -b 0.0.0.0 )
+JBOSS_HOME=${HOME}/wildfly
+WILDFLY_LOG_LEVEL=INFO
+wildfly_runner=( ${HOME}/wildfly/bin/standalone.sh )
 
 if [ -n "$WILDFLY_MANAGEMENT_USER" ]; then
     #From https://hub.docker.com/r/jboss/keycloak/
-    /opt/wildfly/bin/add-user.sh -u "$WILDFLY_MANAGEMENT_USER" -p "$WILDFLY_MANAGEMENT_PASSWORD"
+    ${HOME}/wildfly/bin/add-user.sh -u "$WILDFLY_MANAGEMENT_USER" -p "$WILDFLY_MANAGEMENT_PASSWORD"
 	#Also create a login for the wildfly admin console
-    /opt/wildfly/bin/add-user.sh "$WILDFLY_MANAGEMENT_USER" "$WILDFLY_MANAGEMENT_PASSWORD" --silent
+    ${HOME}/wildfly/bin/add-user.sh "$WILDFLY_MANAGEMENT_USER" "$WILDFLY_MANAGEMENT_PASSWORD" --silent
 fi
 
 echo "Configure JGroups"
-cp /opt/wildfly/standalone/configuration/standalone-ha.xml /opt/wildfly/standalone/configuration/standalone.xml
-cp jgroups-clustering.cli /opt/wildfly/bin
-sh /opt/wildfly/bin/jboss-cli.sh --file=jgroups-clustering.cli
-rm -rf /opt/wildfly/standalone/configuration/standalone_xml_history/current/*
+cp ${HOME}/wildfly/standalone/configuration/standalone-full-ha.xml ${HOME}/wildfly/standalone/configuration/standalone.xml
+cp ${HOME}/dev/jgroups-clustering.cli ${HOME}/wildfly/bin
+echo "Change directory to wildfly location"
+cd ${HOME}/wildfly/bin
+sh ${HOME}/wildfly/bin/jboss-cli.sh --file=jgroups-clustering.cli
+rm -rf ${HOME}/wildfly/standalone/configuration/standalone_xml_history/current/*
 
 echo "Enhancing log leves"
 if [ -n "$WILDFLY_LOG_LEVEL" ] && [ "$WILDFLY_LOG_LEVEL" = 'DEBUG' ]; then
 	sed '/INFO/{s//DEBUG/;:p;n;bp}' $JBOSS_HOME/standalone/configuration/standalone.xml
 	sed -i 's+<logger category="sun.rmi"+<logger category="org.jboss.as.server.deployment"><level name="DEBUG"/></logger><logger category="sun.rmi"+' $JBOSS_HOME/standalone/configuration/standalone.xml
 	sed -i 's+<logger category="sun.rmi"+<logger category="org.jboss.jandex"><level name="DEBUG"/></logger><logger category="sun.rmi"+' $JBOSS_HOME/standalone/configuration/standalone.xml
-	sed -i 's+<level name="INFO"/>+<level name="DEBUG"/>+g' $JBOSS_HOME/standalone/configuration/standalone.xml
+	sed -i "s+<level name=\"INFO\"/>+<level name=\"$WILDFLY_LOG_LEVEL\"/>+g" "$JBOSS_HOME/standalone/configuration/standalone.xml"
 fi
 
-echo "Starting server"
+echo "Copying deployment file"
+cp ${HOME}/jgroups/jgroups-mock-ladon.war ${HOME}/wildfly/standalone/deployments
 
-sh $wildfly_runner
+echo "Starting WildFly server"
+
+#sh $wildfly_runner
