@@ -41,7 +41,8 @@ cp ${HOME}/wildfly/docs/contrib/scripts/systemd/wildfly.service /etc/systemd/sys
 systemctl daemon-reload
 systemctl start wildfly
 systemctl enable wildfly
-echo "Allow traffic on port 8080"
+echo "Allow traffic on wildfly ports"
+apt-get install telnetd -y
 ufw allow 8080/tcp
 ufw allow 7600/tcp
 
