@@ -83,4 +83,4 @@ cp ${HOME}/jgroups/jgroups-mock-ladon.war ${HOME}/wildfly/standalone/deployments
 
 echo "Starting WildFly server"
 
-sh $wildfly_runner
+# sh $wildfly_runner
