@@ -62,7 +62,7 @@ fi
 
 echo "Configure JGroups"
 cp ${HOME}/wildfly/standalone/configuration/standalone-full-ha.xml ${HOME}/wildfly/standalone/configuration/standalone.xml
-cp ${HOME}/dev/jgroups-clustering.cli ${HOME}/wildfly/bin
+cp ${HOME}/jgroups/jgroups-clustering.cli ${HOME}/wildfly/bin
 echo "Change directory to wildfly location"
 cd ${HOME}/wildfly/bin
 sh ${HOME}/wildfly/bin/jboss-cli.sh --file=jgroups-clustering.cli
