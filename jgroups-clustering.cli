@@ -23,11 +23,11 @@ batch
 /socket-binding-group=standard-sockets/socket-binding=jgroups-udp-fd:remove()
 
 # configure TCP stack
-/interface=private:write-attribute(name=nic, value=enp0s3)
+/interface=private:write-attribute(name=nic, value=enp0s8)
 /interface=private:undefine-attribute(name=inet-address)
 /subsystem=jgroups/stack=tcp:add()
 /subsystem=jgroups/stack=tcp/transport=TCP:add(socket-binding="jgroups-tcp")
-/subsystem=jgroups/stack=tcp/transport=TCP/property=bind_addr :add(value="match-interface:enp0s8")
+/subsystem=jgroups/stack=tcp/transport=TCP/property=bind_addr :add(value="match-interface:enp0s3")
 /subsystem=jgroups/stack=tcp/transport=TCP/property=bind_port :add(value="7600")
 /subsystem=jgroups/stack=tcp/transport=TCP/property=recv_buf_size :add(value="5M")
 /subsystem=jgroups/stack=tcp/transport=TCP/property=send_buf_size :add(value="1M")
