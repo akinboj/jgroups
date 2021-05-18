@@ -23,7 +23,7 @@ batch
 /socket-binding-group=standard-sockets/socket-binding=jgroups-udp-fd:remove()
 
 # configure TCP stack
-/interface=private:write-attribute(name=nic, value=enp0s8)
+/interface=private:write-attribute(name=nic, value=enp0s3)
 /interface=private:undefine-attribute(name=inet-address)
 /subsystem=jgroups/stack=tcp:add()
 /subsystem=jgroups/stack=tcp/transport=TCP:add(socket-binding="jgroups-tcp")
