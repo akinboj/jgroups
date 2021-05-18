@@ -26,8 +26,12 @@ batch
 /subsystem=jgroups/channel=ee:write-attribute(name=stack, value=tcpping)
 
 # configure TCPPING for different subnets using initial_hosts
+/interface=private:write-attribute(name=nic, value=enp0s8)
+/interface=private:undefine-attribute(name=inet-address)
 /subsystem="jgroups"/stack="tcpping":add()
 /subsystem="jgroups"/stack="tcpping":add-protocol(type="TCPPING")
+/subsystem=jgroups/stack=tcpping/transport=TCP/property=bind_addr :add(value="match-interface:enp0s8")
+/subsystem=jgroups/stack=tcpping/transport=TCP/property=bind_port :add(value="7600")
 /subsystem="jgroups"/stack="tcpping"/protocol="TCPPING"/property="initial_hosts":add(value="192.168.1.10[7600],192.168.2.12[7600]")
 /subsystem="jgroups"/stack="tcpping"/protocol="TCPPING"/property="port_range":add(value="5")
 /subsystem="jgroups"/stack="tcpping"/protocol="TCPPING"/property="timeout":add(value="3000")
