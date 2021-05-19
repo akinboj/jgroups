@@ -80,6 +80,8 @@ fi
 
 echo "Copying deployment file"
 cp ${HOME}/jgroups/jgroups-mock-ladon.war ${HOME}/wildfly/standalone/deployments
+cp ${HOME}/jgroups/relay2-transport.xml ${HOME}/wildfly/standalone/configuration
+cp ${HOME}/jgroups/relay2-global-transport.xml ${HOME}/wildfly/standalone/configuration
 
 echo "Starting WildFly server"
 
