@@ -45,6 +45,7 @@ echo "Allow traffic on wildfly ports"
 apt-get install telnetd -y
 ufw allow 8080/tcp
 ufw allow 7600/tcp
+ufw allow 7610/tcp
 
 echo "Create a WildFly Administrator" 
 
@@ -52,7 +53,7 @@ echo "Create a WildFly Administrator"
 WILDFLY_MANAGEMENT_USER=pegacorn
 WILDFLY_MANAGEMENT_PASSWORD=jgroups!
 JBOSS_HOME=${HOME}/wildfly
-WILDFLY_LOG_LEVEL=INFO
+WILDFLY_LOG_LEVEL=DEBUG
 wildfly_runner=( ${HOME}/wildfly/bin/standalone.sh )
 
 if [ -n "$WILDFLY_MANAGEMENT_USER" ]; then
