@@ -7,7 +7,7 @@ echo "Starting Wildfly server installation"
 apt-get update
 
 echo "Installing openjdk-11"
-apt-get install openjdk-11-jdk
+apt-get install openjdk-11-jdk -y
 
 echo "Set JAVA_HOME PATH"
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
@@ -76,8 +76,8 @@ if [ -n "$WILDFLY_LOG_LEVEL" ] && [ "$WILDFLY_LOG_LEVEL" = 'DEBUG' ]; then
 	sed '/INFO/{s//DEBUG/;:p;n;bp}' $JBOSS_HOME/standalone/configuration/standalone.xml
 	sed -i 's+<logger category="sun.rmi"+<logger category="org.jboss.as.server.deployment"><level name="DEBUG"/></logger><logger category="sun.rmi"+' $JBOSS_HOME/standalone/configuration/standalone.xml
 	sed -i 's+<logger category="sun.rmi"+<logger category="org.jboss.jandex"><level name="DEBUG"/></logger><logger category="sun.rmi"+' $JBOSS_HOME/standalone/configuration/standalone.xml
-	#sed -i "s+<level name=\"INFO\"/>+<level name=\"$WILDFLY_LOG_LEVEL\"/>+g" "$JBOSS_HOME/standalone/configuration/standalone.xml"
-	sed -i 's+<level name="INFO"/>+<level name="DEBUG"/>+g' $JBOSS_HOME/standalone/configuration/standalone.xml
+	sed -i "s+<level name=\"INFO\"/>+<level name=\"$WILDFLY_LOG_LEVEL\"/>+g" "$JBOSS_HOME/standalone/configuration/standalone.xml"
+	#sed -i 's+<level name="INFO"/>+<level name="DEBUG"/>+g' $JBOSS_HOME/standalone/configuration/standalone.xml
 fi
 
 echo "Copying deployment file"
