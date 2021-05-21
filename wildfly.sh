@@ -53,7 +53,7 @@ echo "Create a WildFly Administrator"
 WILDFLY_MANAGEMENT_USER=pegacorn
 WILDFLY_MANAGEMENT_PASSWORD=jgroups!
 JBOSS_HOME=${HOME}/wildfly
-WILDFLY_LOG_LEVEL=DEBUG
+WILDFLY_LOG_LEVEL=INFO
 wildfly_runner=( ${HOME}/wildfly/bin/standalone.sh )
 
 if [ -n "$WILDFLY_MANAGEMENT_USER" ]; then
