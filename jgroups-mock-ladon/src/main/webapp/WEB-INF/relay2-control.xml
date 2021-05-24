@@ -1,0 +1,15 @@
+<RelayConfiguration xmlns="urn:jgroups:relay:1.0">
+    <sites>
+        <site name="pegacorn-site-a" id="0">
+            <bridges>
+                <bridge config="relay2_global_control_tcp.xml" name="global_control" />
+            </bridges>
+        </site>
+ 
+        <site name="pegacorn-site-b" id="1">
+            <bridges>
+                <bridge config="relay2_global_control_tcp.xml" name="global_control" />
+            </bridges>
+        </site>
+    </sites>
+</RelayConfiguration>
