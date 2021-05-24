@@ -3,6 +3,7 @@ package net.fhirfactory.pegacorn.mock;
 import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.View;
+import org.jgroups.protocols.relay.SiteMaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,8 @@ public class MyTargetWriter {
                     break;
                 }
             }
+            // Add remote site
+            members.add(new SiteMaster("pegacorn-site-b"));
         } catch(Exception ex){
             LOG.error("Error --> " + ex.toString());
         }
