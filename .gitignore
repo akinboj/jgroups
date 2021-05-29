@@ -25,4 +25,3 @@ hs_err_pid*.log
 .ant-targets-build.xml
 *.pem
 release.properties
-/target/
