@@ -395,14 +395,6 @@
                 </invalidation-cache>
                 <replicated-cache name="timestamps"/>
             </cache-container>
-			<cache-container name="pegacorn-clustering">
-                <transport lock-timeout="60000"/>
-				<distributed-cache name="bridged-cache">
-                    <backups>
-                        <backup site="pegacorn-site-b" strategy="SYNC" />
-                    </backups>
-                </distributed-cache>
-            </cache-container>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:io:3.0">
             <worker name="default"/>
@@ -430,51 +422,115 @@
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:jdr:1.0"/>
         <subsystem xmlns="urn:jboss:domain:jgroups:8.0">
-			<channels default="ee">
+            <channels default="ee">
                 <channel name="ee" stack="tcp" cluster="ejb"/>
-				<channel name="xsite" stack="tcp"/>
+				<channel name="ladon-iris" stack="tcp"/>
             </channels>
             <stacks>
-				<stack name="tcp">
+                <stack name="tcp">
                     <transport type="TCP" socket-binding="jgroups-tcp">
-                        <property name="bind_addr">match-interface:enp0s8</property>
-                        <property name="external_addr">192.168.1.1</property>
-                        <property name="bind_port">7600</property>
-                        <property name="recv_buf_size">5M</property>
-                        <property name="send_buf_size">1M</property>
-                        <property name="max_bundle_size">64K</property>
-                        <property name="thread_naming_pattern">cl</property>
+                        <property name="bind_addr">match-interface:ens33</property>
+                        <property name="bind_port">7800</property>
                         <property name="thread_pool.min_threads">0</property>
                         <property name="thread_pool.max_threads">500</property>
                         <property name="thread_pool.keep_alive_time">30000</property>
                     </transport>
-					<socket-protocol type="MPING" socket-binding="jgroups-mping"/>
+                    <!-- <socket-protocol type="MPING" socket-binding="jgroups-mping"/> -->
+					<protocol type="TCPPING">
+						<property name="initial_hosts">192.168.1.20[7800],192.168.2.22[7801]</property>
+						<property name="port_range">10</property>
+						<property name="timeout">3000</property>
+						<property name="num_initial_members">2</property>
+					</protocol>
+                    <protocol type="MERGE3">
+                        <property name="min_interval">10000</property>
+                        <property name="max_interval">30000</property>
+                    </protocol>
+                    <protocol type="FD_ALL3">
+                        <property name="timeout">40000</property>
+                        <property name="interval">5000</property>
+                    </protocol>
+                    <protocol type="VERIFY_SUSPECT">
+                        <property name="timeout">1500</property>
+                    </protocol>
+                    <protocol type="pbcast.NAKACK2">
+                        <property name="use_mcast_xmit">false</property>
+                        <!-- <property name="discard_delivered_msgs">true</property> -->
+                    </protocol>
+                    <protocol type="pbcast.STABLE">
+                        <property name="desired_avg_gossip">50000</property>
+                        <property name="max_bytes">4M</property>
+                    </protocol>
+                    <protocol type="pbcast.GMS">
+                        <property name="print_local_addr">true</property>
+                        <property name="join_timeout">2000</property>
+                    </protocol>
+                    <protocol type="FRAG3">
+                        <property name="frag_size">60K</property>
+                    </protocol>
+                    <protocol type="MFC">
+                        <property name="max_credits">2M</property>
+                        <property name="min_threshold">0.4</property>
+                    </protocol>
+                    <protocol type="UFC">
+                        <property name="max_credits">2M</property>
+                        <property name="min_threshold">0.4</property>
+                    </protocol>
+                    <protocol type="FD_SOCK"/>
+                    <protocol type="pbcast.STATE_TRANSFER"/>
+                    <protocol type="BARRIER"/>
+                    <protocol type="UNICAST3"/>
                 </stack>
 				<stack name="tcp-relay">
 					<transport type="TCP" socket-binding="jgroups-tcp-relay"/>
+                    <!-- <socket-protocol type="MPING" socket-binding="jgroups-mping"/> -->
 					<protocol type="TCPPING">
-						<property name="initial_hosts">192.168.1.10[7600], 192.168.2.12[7800]</property>
+						<property name="initial_hosts">192.168.1.20[7800],192.168.2.22[7801]</property>
+						<property name="port_range">10</property>
+						<property name="timeout">3000</property>
 						<property name="num_initial_members">2</property>
-						<property name="port_range">0</property>
-						<property name="timeout">2000</property>
 					</protocol>
-					<protocol type="MERGE3"/>
-					<protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd-relay"/>
-					<protocol type="FD_ALL"/>
-					<protocol type="VERIFY_SUSPECT"/>
-					<protocol type="pbcast.NAKACK2">
-						<property name="use_mcast_xmit">
-							false
-						</property>
-					</protocol>
-					<protocol type="UNICAST3"/>
-					<protocol type="pbcast.STABLE"/>
-					<protocol type="pbcast.GMS"/>
-					<protocol type="MFC"/>
-					<protocol type="FRAG2"/>
+                    <protocol type="MERGE3">
+                        <property name="min_interval">10000</property>
+                        <property name="max_interval">30000</property>
+                    </protocol>
+                    <protocol type="FD_ALL3">
+                        <property name="timeout">40000</property>
+                        <property name="interval">5000</property>
+                    </protocol>
+                    <protocol type="VERIFY_SUSPECT">
+                        <property name="timeout">1500</property>
+                    </protocol>
+                    <protocol type="pbcast.NAKACK2">
+                        <property name="use_mcast_xmit">false</property>
+                        <!-- <property name="discard_delivered_msgs">true</property> -->
+                    </protocol>
+                    <protocol type="pbcast.STABLE">
+                        <property name="desired_avg_gossip">50000</property>
+                        <property name="max_bytes">4M</property>
+                    </protocol>
+                    <protocol type="pbcast.GMS">
+                        <property name="print_local_addr">true</property>
+                        <property name="join_timeout">2000</property>
+                    </protocol>
+                    <protocol type="FRAG3">
+                        <property name="frag_size">60K</property>
+                    </protocol>
+                    <protocol type="MFC">
+                        <property name="max_credits">2M</property>
+                        <property name="min_threshold">0.4</property>
+                    </protocol>
+                    <protocol type="UFC">
+                        <property name="max_credits">2M</property>
+                        <property name="min_threshold">0.4</property>
+                    </protocol>
+                    <protocol type="FD_SOCK"/>
+                    <protocol type="pbcast.STATE_TRANSFER"/>
+                    <protocol type="BARRIER"/>
+                    <protocol type="UNICAST3"/>
 					<relay site="pegacorn-site-a">
-						<remote-site name="pegacorn-site-b" channel="xsite"/>
-						<property name="relay_multicasts">false</property>
+						<remote-site name="pegacorn-site-b" channel="ladon-iris"/>
+						<property name="relay_multicasts">true</property>
 					</relay>
 				</stack>
             </stacks>
@@ -645,7 +701,7 @@
             <inet-address value="${jboss.bind.address.management:127.0.0.1}"/>
         </interface>
         <interface name="private">
-            <nic name="enp0s8"/>
+            <nic name="ens33"/>
         </interface>
         <interface name="public">
             <inet-address value="${jboss.bind.address:127.0.0.1}"/>
@@ -660,11 +716,10 @@
         <socket-binding name="https" port="${jboss.https.port:8443}"/>
         <socket-binding name="iiop" interface="unsecure" port="3528"/>
         <socket-binding name="iiop-ssl" interface="unsecure" port="3529"/>
-        <socket-binding name="jgroups-mping" interface="private" multicast-address="${jboss.default.multicast.address:230.0.0.4}" multicast-port="45700"/>
-        <socket-binding name="jgroups-tcp" port="7600"/>
-        <socket-binding name="jgroups-tcp-fd" port="57600"/>
-		<socket-binding name="jgroups-tcp-relay" port="7610"/>
-        <socket-binding name="jgroups-tcp-fd-relay" port="57610"/>
+        <!-- <socket-binding name="jgroups-mping" interface="private" multicast-address="${jboss.default.multicast.address:230.0.0.4}" multicast-port="45700"/> -->
+        <socket-binding name="jgroups-tcp" interface="private" port="7800"/>
+        <socket-binding name="jgroups-tcp-fd" interface="private" port="57600"/>
+		<socket-binding name="jgroups-tcp-relay" interface="private" port="7800"/>
         <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:9990}"/>
         <socket-binding name="management-https" interface="management" port="${jboss.management.https.port:9993}"/>
         <socket-binding name="modcluster" multicast-address="${jboss.modcluster.multicast.address:224.0.1.105}" multicast-port="23364"/>
