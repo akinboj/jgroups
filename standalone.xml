@@ -439,8 +439,6 @@
 					<protocol type="TCPPING">
 						<property name="initial_hosts">192.168.1.20[7800],192.168.2.22[7801]</property>
 						<property name="port_range">10</property>
-						<property name="timeout">3000</property>
-						<property name="num_initial_members">2</property>
 					</protocol>
                     <protocol type="MERGE3">
                         <property name="min_interval">10000</property>
@@ -487,8 +485,6 @@
 					<protocol type="TCPPING">
 						<property name="initial_hosts">192.168.1.20[7800],192.168.2.22[7801]</property>
 						<property name="port_range">10</property>
-						<property name="timeout">3000</property>
-						<property name="num_initial_members">2</property>
 					</protocol>
                     <protocol type="MERGE3">
                         <property name="min_interval">10000</property>
