@@ -1,2 +1,1 @@
-# jgroups
-JGroups Clustering
+# pegacorn-ipc-poc
