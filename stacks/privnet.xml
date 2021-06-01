@@ -9,7 +9,7 @@
          thread_pool.keep_alive_time="30000"/>
      <RELAY
          site="SiteA.PrivNet"
-         bridge_props="/home/mhunter/JGroupsTests/sitea.xml"
+         bridge_props="/home/pegacorn/JGroupsTests/sitea.xml"
 	 bridge_name="SiteAInterZone"
          relay="true"
 	 />
