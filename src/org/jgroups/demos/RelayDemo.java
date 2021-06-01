@@ -18,7 +18,7 @@ public class RelayDemo implements Receiver {
 
 
     public static void main(String[] args) throws Exception {
-        String props="tcp.xml";
+        String props="udp.xml";
         String name=null;
         boolean print_route_status=false, nohup=false;
 

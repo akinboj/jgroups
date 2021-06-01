@@ -13,15 +13,15 @@
                     xsi:schemaLocation="urn:jgroups:relay:1.0 relay.xsd">
 
     <sites>
-        <site name="pegacorn-site-a">
+        <site name="SiteA.PrivNet">
             <bridges>
-                <bridge config="pegacorn-global.xml" name="Iris-Ladon"/>
+                <bridge config="pegacorn-global.xml" name="SiteAInterZone"/>
             </bridges>
         </site>
 
-        <site name="pegacorn-site-b">
+        <site name="SiteA.DMZ">
             <bridges>
-                <bridge config="pegacorn-global.xml" name="Iris-Ladon"/>
+                <bridge config="pegacorn-global.xml" name="SiteAInterZone"/>
             </bridges>
         </site>
     </sites>

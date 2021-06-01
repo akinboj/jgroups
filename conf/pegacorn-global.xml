@@ -10,7 +10,7 @@
         xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups.xsd"
         >
     <TCP bind_addr="${jgroups.bind_addr:match-interface:ens33}"
-         bind_port="${jgroups.bind_port:7800}"
+         bind_port="${jgroups.bind_port:7600}"
          external_addr="${jgroups.external_addr}"
          external_port="${jgroups.external_port}"
          thread_pool.min_threads="0"
@@ -19,7 +19,7 @@
     <RED/>
 
     <TCPPING async_discovery="true"
-             initial_hosts="${jgroups.tcpping.initial_hosts:192.168.1.20[7800],192.168.2.22[7801]}"
+             initial_hosts="${jgroups.tcpping.initial_hosts:192.168.1.20[7600],192.168.2.20[7600],192.168.1.21[7600],192.168.2.21[7600]}"
              return_entire_cache="${jgroups.tcpping.return_entire_cache:false}"
              port_range="${jgroups.tcp.port_range:2}"/>
     <MERGE3  min_interval="10000"
@@ -29,7 +29,7 @@
     <VERIFY_SUSPECT2 timeout="1500"  />
     <BARRIER />
     <pbcast.NAKACK2 use_mcast_xmit="false" />
-    <!-- <UNICAST3 /> -->
+    <UNICAST3 />
     <pbcast.STABLE desired_avg_gossip="50000"
                    max_bytes="4M"/>
     <pbcast.GMS print_local_addr="true" join_timeout="2000"/>
