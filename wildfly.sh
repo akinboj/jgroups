@@ -71,11 +71,4 @@ if [ -n "$WILDFLY_LOG_LEVEL" ] && [ "$WILDFLY_LOG_LEVEL" = 'DEBUG' ]; then
 fi
 
 
-echo "Clone repo"
-cd ~
-git clone -b feature/ipc-poc-wildfly https://github.com/akinboj/jgroups.git jgroups-ipc-wildfly
-
-chown -R pegacorn:0 ${HOME}/jgroups-ipc-wildfly/
-chown -R pegacorn:0 ${HOME}/wildfly/
-
 # sh $wildfly_runner
