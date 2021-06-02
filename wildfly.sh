@@ -14,13 +14,6 @@ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 echo $JAVA_HOME
 export PATH=$PATH:$JAVA_HOME/bin
 echo $PATH
-java -version >>version.txt 2>&1 | cat $HOME/version.txt
-
-echo "Installing Maven"
-apt-get install maven -y
-export M2_HOME=/opt/maven
-export MAVEN_HOME=/opt/maven
-export PATH=${M2_HOME}/bin:${PATH}
 
 echo "Create a user and group for WildFly"
 groupadd -r jboss
