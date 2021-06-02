@@ -3,16 +3,16 @@
   <target name="main">
     <property name="compile_classpath" refid="maven.compile.classpath" />
     <property name="plugin_classpath" refid="maven.plugin.classpath" />
-    <delete failonerror="false" dir="D:\dev\jgroups-relaydemo\target/schema" />
-    <mkdir dir="D:\dev\jgroups-relaydemo\target/schema" />
+    <delete failonerror="false" dir="/home/pegacorn/jgroups/target/schema" />
+    <mkdir dir="/home/pegacorn/jgroups/target/schema" />
     <java classname="org.jgroups.util.XMLSchemaGenerator">
       <classpath>
         <pathelement path="${compile_classpath}" />
         <pathelement path="${plugin_classpath}" />
       </classpath>
-      <arg line="-Dlog4j2.disable.jmx=true -o D:\dev\jgroups-relaydemo\target/schema" />
+      <arg line="-Dlog4j2.disable.jmx=true -o /home/pegacorn/jgroups/target/schema" />
     </java>
-    <copy todir="D:\dev\jgroups-relaydemo\target/schema">
+    <copy todir="/home/pegacorn/jgroups/target/schema">
       <fileset dir="conf">
         <include name="*.xsd" />
       </fileset>
