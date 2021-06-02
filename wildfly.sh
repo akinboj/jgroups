@@ -6,16 +6,6 @@ echo "Starting Wildfly server installation"
 
 apt-get update
 
-echo "Installing openjdk-11"
-apt-get install openjdk-11-jdk -y
-
-echo "Set JAVA_HOME PATH"
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-echo $JAVA_HOME
-export PATH=$PATH:$JAVA_HOME/bin
-echo $PATH
-echo java -version
-
 echo "Create a user and group for WildFly"
 groupadd -r jboss
 useradd -r -g jboss -d ${HOME}/wildfly -s /sbin/nologin jboss
@@ -80,11 +70,11 @@ if [ -n "$WILDFLY_LOG_LEVEL" ] && [ "$WILDFLY_LOG_LEVEL" = 'DEBUG' ]; then
 	#sed -i 's+<level name="INFO"/>+<level name="DEBUG"/>+g' $JBOSS_HOME/standalone/configuration/standalone.xml
 fi
 
-# echo "Copying deployment file"
-# cp ${HOME}/jgroups/jgroups-mock-ladon.war ${HOME}/wildfly/standalone/deployments
-# cp ${HOME}/jgroups/relay2-transport.xml ${HOME}/wildfly/standalone/configuration
-# cp ${HOME}/jgroups/relay2-global-transport.xml ${HOME}/wildfly/standalone/configuration
 
-echo "Starting WildFly server"
+echo "Clone repo"
+git clone -b feature/ipc-poc-wildfly https://github.com/akinboj/jgroups.git jgroups-ipc-wildfly
+
+chown -R pegacorn:0 ${HOME}/jgroups-ipc-wildfly/
+chown -R pegacorn:0 ${HOME}/wildfly/
 
 # sh $wildfly_runner
