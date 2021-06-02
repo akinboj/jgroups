@@ -6,19 +6,15 @@ echo "Starting Wildfly server installation"
 
 apt-get update
 
-echo "Installing openjdk-11 and Maven"
-apt-get install maven -y
-
-echo "Set Maven path"
-export M2_HOME=/opt/maven
-export MAVEN_HOME=/opt/maven
-export PATH=${M2_HOME}/bin:${PATH}
+echo "Installing openjdk-11"
+apt-get install openjdk-11-jdk -y
 
 echo "Set JAVA_HOME PATH"
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 echo $JAVA_HOME
 export PATH=$PATH:$JAVA_HOME/bin
 echo $PATH
+echo java -version
 
 echo "Create a user and group for WildFly"
 groupadd -r jboss
@@ -47,10 +43,9 @@ systemctl start wildfly
 systemctl enable wildfly
 echo "Allow traffic on wildfly ports"
 apt-get install telnetd -y
-ufw enable
-ufw allow 8080
-ufw allow 7600
-ufw allow 7610
+ufw allow 8080/tcp
+ufw allow 7600/tcp
+ufw allow 7610/tcp
 
 echo "Create a WildFly Administrator" 
 
@@ -76,7 +71,7 @@ cd ${HOME}/wildfly/bin
 # sh ${HOME}/wildfly/bin/jboss-cli.sh --file=jgroups-clustering.cli
 rm -rf ${HOME}/wildfly/standalone/configuration/standalone_xml_history/current/*
 
-echo "Enhancing log levels"
+echo "Enhancing log leves"
 if [ -n "$WILDFLY_LOG_LEVEL" ] && [ "$WILDFLY_LOG_LEVEL" = 'DEBUG' ]; then
 	sed '/INFO/{s//DEBUG/;:p;n;bp}' $JBOSS_HOME/standalone/configuration/standalone.xml
 	sed -i 's+<logger category="sun.rmi"+<logger category="org.jboss.as.server.deployment"><level name="DEBUG"/></logger><logger category="sun.rmi"+' $JBOSS_HOME/standalone/configuration/standalone.xml
@@ -90,12 +85,6 @@ fi
 # cp ${HOME}/jgroups/relay2-transport.xml ${HOME}/wildfly/standalone/configuration
 # cp ${HOME}/jgroups/relay2-global-transport.xml ${HOME}/wildfly/standalone/configuration
 
-cd ~
-echo "Cloning repos"
-git clone -b feature/ipc-poc-wildfly https://github.com/akinboj/jgroups.git jgroups-ipc-wildfly
-
-echo "Change directory ownership"
-chown -R pegacorn:0 ${HOME}/jgroups-ipc-wildfly/
-chown -R pegacorn:0 ${HOME}/wildfly/
+echo "Starting WildFly server"
 
 # sh $wildfly_runner
