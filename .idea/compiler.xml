@@ -6,13 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="jgroups-standalone-poc" />
-        <module name="jgroups-relay2-node" />
+        <module name="jgroups-wildfly-poc" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="jgroups-relay2-node" target="11" />
-      <module name="jgroups-standalone-poc" target="11" />
+      <module name="jgroups-wildfly-poc" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
