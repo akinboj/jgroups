@@ -49,9 +49,10 @@ systemctl start wildfly
 systemctl enable wildfly
 echo "Allow traffic on wildfly ports"
 apt-get install telnetd -y
-ufw allow 8080/tcp
-ufw allow 7600/tcp
-ufw allow 7610/tcp
+ufw enable
+ufw allow 8080
+ufw allow 7600
+ufw allow 7610
 
 echo "Create a WildFly Administrator" 
 
@@ -77,7 +78,7 @@ cd ${HOME}/wildfly/bin
 # sh ${HOME}/wildfly/bin/jboss-cli.sh --file=jgroups-clustering.cli
 rm -rf ${HOME}/wildfly/standalone/configuration/standalone_xml_history/current/*
 
-echo "Enhancing log leves"
+echo "Enhancing log levels"
 if [ -n "$WILDFLY_LOG_LEVEL" ] && [ "$WILDFLY_LOG_LEVEL" = 'DEBUG' ]; then
 	sed '/INFO/{s//DEBUG/;:p;n;bp}' $JBOSS_HOME/standalone/configuration/standalone.xml
 	sed -i 's+<logger category="sun.rmi"+<logger category="org.jboss.as.server.deployment"><level name="DEBUG"/></logger><logger category="sun.rmi"+' $JBOSS_HOME/standalone/configuration/standalone.xml
@@ -91,9 +92,10 @@ fi
 # cp ${HOME}/jgroups/relay2-transport.xml ${HOME}/wildfly/standalone/configuration
 # cp ${HOME}/jgroups/relay2-global-transport.xml ${HOME}/wildfly/standalone/configuration
 
+cd ~
 echo "Cloning repos"
 git clone -b feature/ipc-poc-wildfly https://github.com/akinboj/jgroups.git jgroups-ipc-wildfly
 chown -R pegacorn:0 jgroups-ipc-wildfly/
-chown -R pegacorn:0 wildfly/
+chown -R pegacorn:0 /home/pegacorn/wildfly/
 
 # sh $wildfly_runner
