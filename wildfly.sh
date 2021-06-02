@@ -16,6 +16,12 @@ export PATH=$PATH:$JAVA_HOME/bin
 echo $PATH
 echo java -version
 
+echo "Installing Maven"
+apt-get install maven -y
+export M2_HOME=/opt/maven
+export MAVEN_HOME=/opt/maven
+export PATH=${M2_HOME}/bin:${PATH}
+
 echo "Create a user and group for WildFly"
 groupadd -r jboss
 useradd -r -g jboss -d ${HOME}/wildfly -s /sbin/nologin jboss
@@ -65,10 +71,10 @@ fi
 
 echo "Configure JGroups"
 cp ${HOME}/wildfly/standalone/configuration/standalone-full-ha.xml ${HOME}/wildfly/standalone/configuration/standalone.xml
-cp ${HOME}/jgroups/jgroups-clustering.cli ${HOME}/wildfly/bin
+# cp ${HOME}/jgroups/jgroups-clustering.cli ${HOME}/wildfly/bin
 echo "Change directory to wildfly location"
 cd ${HOME}/wildfly/bin
-sh ${HOME}/wildfly/bin/jboss-cli.sh --file=jgroups-clustering.cli
+# sh ${HOME}/wildfly/bin/jboss-cli.sh --file=jgroups-clustering.cli
 rm -rf ${HOME}/wildfly/standalone/configuration/standalone_xml_history/current/*
 
 echo "Enhancing log leves"
@@ -80,11 +86,14 @@ if [ -n "$WILDFLY_LOG_LEVEL" ] && [ "$WILDFLY_LOG_LEVEL" = 'DEBUG' ]; then
 	#sed -i 's+<level name="INFO"/>+<level name="DEBUG"/>+g' $JBOSS_HOME/standalone/configuration/standalone.xml
 fi
 
-echo "Copying deployment file"
-cp ${HOME}/jgroups/jgroups-mock-ladon.war ${HOME}/wildfly/standalone/deployments
-cp ${HOME}/jgroups/relay2-transport.xml ${HOME}/wildfly/standalone/configuration
-cp ${HOME}/jgroups/relay2-global-transport.xml ${HOME}/wildfly/standalone/configuration
+# echo "Copying deployment file"
+# cp ${HOME}/jgroups/jgroups-mock-ladon.war ${HOME}/wildfly/standalone/deployments
+# cp ${HOME}/jgroups/relay2-transport.xml ${HOME}/wildfly/standalone/configuration
+# cp ${HOME}/jgroups/relay2-global-transport.xml ${HOME}/wildfly/standalone/configuration
 
-echo "Starting WildFly server"
+echo "Cloning repos"
+git clone -b feature/ipc-poc-wildfly https://github.com/akinboj/jgroups.git jgroups-ipc-wildfly
+chown -R pegacorn:0 jgroups-ipc-wildfly/
+chown -R pegacorn:0 wildfly/
 
 # sh $wildfly_runner
