@@ -14,7 +14,7 @@ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 echo $JAVA_HOME
 export PATH=$PATH:$JAVA_HOME/bin
 echo $PATH
-echo java -version
+java -version >>version.txt 2>&1 | cat $HOME/version.txt
 
 echo "Installing Maven"
 apt-get install maven -y
@@ -95,7 +95,7 @@ fi
 cd ~
 echo "Cloning repos"
 git clone -b feature/ipc-poc-wildfly https://github.com/akinboj/jgroups.git jgroups-ipc-wildfly
-chown -R pegacorn:0 jgroups-ipc-wildfly/
-chown -R pegacorn:0 /home/pegacorn/wildfly/
+chown -R pegacorn:0 ${HOME}/jgroups-ipc-wildfly/
+chown -R pegacorn:0 ${HOME}/wildfly/
 
 # sh $wildfly_runner
