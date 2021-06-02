@@ -72,6 +72,7 @@ fi
 
 
 echo "Clone repo"
+cd ~
 git clone -b feature/ipc-poc-wildfly https://github.com/akinboj/jgroups.git jgroups-ipc-wildfly
 
 chown -R pegacorn:0 ${HOME}/jgroups-ipc-wildfly/
