@@ -6,8 +6,13 @@ echo "Starting Wildfly server installation"
 
 apt-get update
 
-echo "Installing openjdk-11"
-apt-get install openjdk-11-jdk -y
+echo "Installing openjdk-11 and Maven"
+apt-get install maven -y
+
+echo "Set Maven path"
+export M2_HOME=/opt/maven
+export MAVEN_HOME=/opt/maven
+export PATH=${M2_HOME}/bin:${PATH}
 
 echo "Set JAVA_HOME PATH"
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
@@ -88,5 +93,9 @@ fi
 cd ~
 echo "Cloning repos"
 git clone -b feature/ipc-poc-wildfly https://github.com/akinboj/jgroups.git jgroups-ipc-wildfly
+
+echo "Change directory ownership"
+chown -R pegacorn:0 ${HOME}/jgroups-ipc-wildfly/
+chown -R pegacorn:0 ${HOME}/wildfly/
 
 # sh $wildfly_runner
