@@ -1,4 +1,4 @@
-# Do not push to remote repository
+# Do not push to remote repository || Github & Azure Repos
 /target/
 .classpath
 /.settings/
