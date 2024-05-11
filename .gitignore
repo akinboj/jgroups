@@ -1,1 +1,6 @@
+# Do not push to remote
 /target/
+.classpath
+/.settings/
+.project
+.jgroups.jar
