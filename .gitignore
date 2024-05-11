@@ -1,4 +1,4 @@
-# Do not push to remote
+# Do not push to remote repository
 /target/
 .classpath
 /.settings/
