@@ -62,7 +62,7 @@
             <configuration>
                 <transformers>
                     <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                        <mainClass>net.development.jgroupshl7.JGroupsMessageSenderReceiver</mainClass>
+                        <mainClass>net.development.jgroupshl7.HL7StartInterface</mainClass>
                     </transformer>
                 </transformers>
                 <filters>
