@@ -1,7 +1,11 @@
+# ************************************************************
 # Do not push to remote repository || Github & Azure Repos
+
 /target/
 .classpath
 /.settings/
 .project
 jgroups.jar
 /.vscode/
+
+# ************************************************************
