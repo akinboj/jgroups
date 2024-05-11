@@ -3,5 +3,5 @@
 .classpath
 /.settings/
 .project
-.jgroups.jar
+jgroups.jar
 /.vscode/
