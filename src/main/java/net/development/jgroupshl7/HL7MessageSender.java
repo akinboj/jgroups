@@ -1,8 +1,10 @@
 package net.development.jgroupshl7;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -49,9 +51,10 @@ public class HL7MessageSender {
             logger.error("Error starting HL7 message server: {}", e.getMessage(), e);
         }
     }
-    
+
     private void handleHL7Message(Socket clientSocket) throws InterruptedException {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
             StringBuilder hl7MessageBuilder = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {
@@ -71,8 +74,8 @@ public class HL7MessageSender {
         } catch (IOException e) {
             logger.error("Error handling HL7 message: {}", e.getMessage(), e);
         }
-    } 
-    
+    }
+
     private void sendHL7Message(String hl7Message) throws InterruptedException {
         try {
             Message msg = new ObjectMessage(null, hl7Message.getBytes("UTF-8"));
