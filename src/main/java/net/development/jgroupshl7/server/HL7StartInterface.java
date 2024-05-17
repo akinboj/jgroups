@@ -1,4 +1,4 @@
-package net.development.jgroupshl7;
+package net.development.jgroupshl7.server;
 
 public class HL7StartInterface {
 	
