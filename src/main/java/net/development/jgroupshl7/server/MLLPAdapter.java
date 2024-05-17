@@ -1,4 +1,4 @@
-package net.development.jgroupshl7;
+package net.development.jgroupshl7.server;
 
 import java.io.IOException;
 import java.net.Socket;

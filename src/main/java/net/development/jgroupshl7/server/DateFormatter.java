@@ -1,4 +1,4 @@
-package net.development.jgroupshl7;
+package net.development.jgroupshl7.server;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -13,7 +13,7 @@ public class DateFormatter {
     public String hl7AckTimeFormat() {
         ZonedDateTime dateTime = ZonedDateTime.now(ZoneId.of("Australia/Sydney"));
         String formattedDate = formatDate(dateTime);
-        return formattedDate; // Output: 20240512T18:24:27+10:00
+        return formattedDate; // Output: 20240512T182427+10
     }
 }
 
