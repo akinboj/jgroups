@@ -7,6 +7,15 @@
   <version>1.0.0-SNAPSHOT</version>
   <description>HL7 communication with JGroups - Server mode</description>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.xsd</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>

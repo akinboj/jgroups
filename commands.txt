@@ -1,0 +1,8 @@
+# Maven build
+mvn clean install -DskipTests
+
+# Build docker image
+docker build --rm -t interface-hl7server-jgroups:1.0.0-snapshot --file Dockerfile .
+
+# Deploy to microservice
+helm upgrade interface-hl7server-jgroups-site-a --install --namespace site-a --set serviceName=interface-hl7server-jgroups,basePort=30210,imageTag=1.0.0-snapshot,numOfPods=1 helm

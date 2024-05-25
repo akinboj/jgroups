@@ -1,0 +1,5 @@
+---
+name: hl7-messaging-jgroups
+version: 1.0.0-SNAPSHOT
+description: HL7Messaging Server - JGroups clustering
+icon: img/icons/camel.svg

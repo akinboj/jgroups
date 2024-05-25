@@ -15,10 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HL7MessageSender {
-    private static final Logger logger = LoggerFactory.getLogger(HL7MessageSender.class);
+    private static final Logger logger = LoggerFactory.getLogger(HL7MessageSender.class);    
     private static final String JGROUPS_CLUSTER_NAME = "HL7Cluster";
-    private static final String JGROUPS_CONFIG_FILE = "tcp.xml";
-    private static final String HL7_SERVER_HOST = "192.168.0.17";
+    private static final String JGROUPS_CONFIG_FILE = "kube.xml";
+    private static final String HL7_SERVER_HOST = System.getenv("MY_POD_IP");
     private static final int HL7_SERVER_PORT = 3200;
 
     private JChannel channel;
@@ -29,11 +29,13 @@ public class HL7MessageSender {
         channel = new JChannel(JGROUPS_CONFIG_FILE);
         channel.setReceiver(hl7receiver);
         channel.connect(JGROUPS_CLUSTER_NAME);
+        
+        // Set the local address in the receiver after connecting the channel
+        hl7receiver.setLocalAddress(channel.getAddress());
 
         // Start the HL7 message server
         startHL7MessageServer();
-
-        hl7receiver.receiveMessages();
+        
         channel.close();
         serverSocket.close();
     }
@@ -66,22 +68,22 @@ public class HL7MessageSender {
             String hl7Message = hl7MessageBuilder.toString();
             logger.info("=**=>Incoming HL7 message:\n{}", hl7Message);
 
-            // Send the HL7 message through the JGroups channel
-            sendHL7Message(hl7Message);
-
             // Send the ACK back to the client using the MLLP adapter
             MLLPAdapter.sendACK(clientSocket, hl7Message);
+            
+            // Forward the HL7 message to other pods in the cluster using JGroups
+            forwardHL7MessageToCluster(hl7Message);
         } catch (IOException e) {
             logger.error("Error handling HL7 message: {}", e.getMessage(), e);
         }
     }
-
-    private void sendHL7Message(String hl7Message) throws InterruptedException {
+    
+    private void forwardHL7MessageToCluster(String hl7Message) {
         try {
-            Message msg = new ObjectMessage(null, hl7Message.getBytes("UTF-8"));
-            channel.send(msg);
+            Message jgroupsMessage = new ObjectMessage(null, hl7Message);
+            channel.send(jgroupsMessage);
         } catch (Exception e) {
-            logger.error("Error sending HL7 message: {}", e.getMessage(), e);
+            logger.error("Error forwarding HL7 message to cluster: {}", e.getMessage(), e);
         }
     }
 }
