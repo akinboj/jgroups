@@ -22,33 +22,26 @@
 
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.30</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/ca.uhn.hapi/hapi-base -->
-	<dependency>
-	    <groupId>ca.uhn.hapi</groupId>
-	    <artifactId>hapi-base</artifactId>
-	    <version>2.5.1</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/ca.uhn.hapi/hapi-structures-v24 -->
-	<dependency>
-	    <groupId>ca.uhn.hapi</groupId>
-	    <artifactId>hapi-structures-v24</artifactId>
-	    <version>2.5.1</version>
-	</dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.7.30</version>
+    </dependency>
 	<!-- https://mvnrepository.com/artifact/org.jgroups/jgroups -->
 	<dependency>
 	    <groupId>org.jgroups</groupId>
 	    <artifactId>jgroups</artifactId>
-	    <version>5.3.6.Final</version>
+	    <version>5.1.4.Final</version>
 	</dependency>
-	<!-- Spring Boot starter dependency -->
+	<!-- https://mvnrepository.com/artifact/org.jgroups.kubernetes/jgroups-kubernetes -->
 	<dependency>
-    	<groupId>org.springframework.boot</groupId>
-    	<artifactId>spring-boot-starter</artifactId>
-    	<version>2.6.2</version>
+	    <groupId>org.jgroups.kubernetes</groupId>
+	    <artifactId>jgroups-kubernetes</artifactId>
+	    <version>2.0.1.Final</version>
 	</dependency>
   </dependencies>
   
@@ -86,6 +79,16 @@
             </executions>
         </plugin>
     </plugins>
+    <!-- Resources -->
+        <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*.xsd</include>
+                <include>**/*.xml</include>
+            </includes>
+        </resource>
+    </resources>
 </build>
   
 </project>
