@@ -1,6 +1,9 @@
 package net.development.jgroupshl7.server;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.jgroups.Address;
 import org.jgroups.Message;
@@ -12,6 +15,7 @@ import org.slf4j.LoggerFactory;
 public class HL7MessageReceiver implements Receiver {
     private static final Logger logger = LoggerFactory.getLogger(HL7MessageReceiver.class);
     private Address localAddress;
+    private Set<Address> previousMembers = new HashSet<>();
 
     // No-argument constructor
     public HL7MessageReceiver() {
@@ -59,6 +63,24 @@ public class HL7MessageReceiver implements Receiver {
 
     @Override
     public void viewAccepted(View view) {
-        logger.info("*** Received view: {}", view);
+        List<Address> members = view.getMembers();
+        if (members.isEmpty()) {
+            logger.info("No members in the cluster.");
+        } else {
+            for (Address member : members) {
+                if (!member.equals(localAddress) && !previousMembers.contains(member)) {
+                    logger.info(">>> Member: [{}] JOINED the cluster", member);
+                }
+            }
+            for (Address member : previousMembers) {
+                if (!members.contains(member)) {
+                    logger.info("<<< Member: [{}] LEFT the cluster", member);
+                }
+            }
+            previousMembers.clear();
+            previousMembers.addAll(members);
+            logger.info("*** Received view: {}", view);
+        }
     }
+
 }
