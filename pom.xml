@@ -18,30 +18,53 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
+    <version-org.slf4j>1.7.30</version-org.slf4j>
+    <version-org.apache.camel>4.6.0</version-org.apache.camel>
+    <version-org.jgroups>5.3.7.Final</version-org.jgroups>
+    <version-org.jgroups.kubernetes>2.0.2.Final</version-org.jgroups.kubernetes>
+    <version-org.apache.maven.plugins>3.2.4</version-org.apache.maven.plugins>
   </properties>
 
   <dependencies>
     <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.7.30</version>
+        <version>${version-org.slf4j}</version>
     </dependency>
     <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
-        <version>1.7.30</version>
+        <version>${version-org.slf4j}</version>
     </dependency>
 	<!-- https://mvnrepository.com/artifact/org.jgroups/jgroups -->
 	<dependency>
 	    <groupId>org.jgroups</groupId>
 	    <artifactId>jgroups</artifactId>
-	    <version>5.1.4.Final</version>
+	    <version>${version-org.jgroups}</version>
 	</dependency>
 	<!-- https://mvnrepository.com/artifact/org.jgroups.kubernetes/jgroups-kubernetes -->
 	<dependency>
 	    <groupId>org.jgroups.kubernetes</groupId>
 	    <artifactId>jgroups-kubernetes</artifactId>
-	    <version>2.0.1.Final</version>
+	    <version>${version-org.jgroups.kubernetes}</version>
+	</dependency>
+	<!-- Apache Camel -->
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core</artifactId>
+        <version>${version-org.apache.camel}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-jgroups -->
+	<dependency>
+	    <groupId>org.apache.camel</groupId>
+	    <artifactId>camel-jgroups</artifactId>
+	    <version>${version-org.apache.camel}</version>
+	</dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-netty4 -->
+	<dependency>
+	    <groupId>org.apache.camel</groupId>
+	    <artifactId>camel-mllp</artifactId>
+	    <version>${version-org.apache.camel}</version>
 	</dependency>
   </dependencies>
   
@@ -51,7 +74,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
-            <version>3.2.4</version> <!-- Adjust version as needed -->
+            <version>${version-org.apache.maven.plugins}</version> <!-- Adjust version as needed -->
             <configuration>
                 <transformers>
                     <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
