@@ -54,12 +54,6 @@
         <artifactId>camel-core</artifactId>
         <version>${version-org.apache.camel}</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-jgroups -->
-	<dependency>
-	    <groupId>org.apache.camel</groupId>
-	    <artifactId>camel-jgroups</artifactId>
-	    <version>${version-org.apache.camel}</version>
-	</dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-netty4 -->
 	<dependency>
 	    <groupId>org.apache.camel</groupId>

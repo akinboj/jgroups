@@ -20,11 +20,11 @@ public class HL7MessageRouter {
     private JChannel channel;
 
     public void start() throws Exception {
-    	HL7MessageReceiver hl7receiver = new HL7MessageReceiver();
+        HL7MessageReceiver hl7receiver = new HL7MessageReceiver();
         channel = new JChannel(JGROUPS_CONFIG_FILE);
         channel.setReceiver(hl7receiver);
         channel.connect(JGROUPS_CLUSTER_NAME);
-        
+
         // Set the local address in the receiver after connecting the channel
         hl7receiver.setLocalAddress(channel.getAddress());
 
@@ -70,26 +70,22 @@ public class HL7MessageRouter {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // Route to receive HL7 messages over MLLP
-                from("mllp://" + HL7_SERVER_HOST + ":" + HL7_SERVER_PORT)
+                // Route to receive HL7 messages over MLLP with auto acknowledgment
+                from("mllp://" + HL7_SERVER_HOST + ":" + HL7_SERVER_PORT + "?autoAck=true")
                     .process(exchange -> {
                         String hl7Message = exchange.getIn().getBody(String.class);
                         logger.info("=**=>Incoming HL7 message:\n{}", hl7Message);
-
-                        // Send ACK back to the client
-                        String ackMessage = MLLPAdapter.generateACKMessage(hl7Message);
-                        exchange.getMessage().setBody(ackMessage);
-
-                        // Log the ACK being sent back to the client
-                        logger.info("=**=>Sent ACK message to client:{}", ackMessage);
-
+                        
+                        // Log generic auto-generated ACK statement
+                        logger.info("=**=>Sent MLLP_AUTO_ACKNOWLEDGEMENT message back to client");
+                                                
                         // Forward HL7 message to JGroups cluster
                         forwardHL7MessageToCluster(hl7Message);
                     });
             }
         };
     }
-
+   
     private void forwardHL7MessageToCluster(String hl7Message) {
         try {
             Message jgroupsMessage = new ObjectMessage(null, hl7Message);
@@ -98,4 +94,5 @@ public class HL7MessageRouter {
             logger.error("Error forwarding HL7 message to cluster: {}", e.getMessage(), e);
         }
     }
+    
 }
