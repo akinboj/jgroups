@@ -1,9 +1,12 @@
 package net.development.jgroupshl7.server;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mllp.MllpComponent;
+import org.apache.camel.component.mllp.MllpConstants;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.component.rabbitmq.RabbitMQComponent;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ObjectMessage;
@@ -16,8 +19,22 @@ public class HL7MessageRouter {
     private static final String JGROUPS_CONFIG_FILE = "kube.xml";
     private static final String HL7_SERVER_HOST = System.getenv("MY_POD_IP");
     private static final int HL7_SERVER_PORT = 3200;
+    private static final String RABBITMQ_QUEUE_NAME = "hl7-messages";
+    private static final String RABBITMQ_HOST = System.getenv("RABBITMQ_HOST");
+    private static final String RABBITMQ_PORT = System.getenv("RABBITMQ_PORT");
+    private static final String RABBITMQ_USERNAME = System.getenv("RABBITMQ_USERNAME");
+    private static final String RABBITMQ_PASSWORD = System.getenv("RABBITMQ_PASSWORD");
+    private static final String RABBITMQ_URI = "rabbitmq://" + RABBITMQ_HOST + ":" + RABBITMQ_PORT + "/" + RABBITMQ_QUEUE_NAME
+            + "?username=" + RABBITMQ_USERNAME
+            + "&password=" + RABBITMQ_PASSWORD
+            + "&queue=" + RABBITMQ_QUEUE_NAME
+            + "&autoDelete=false"
+            + "&durable=true"
+            + "&declare=true";
 
     private JChannel channel;
+    private CamelContext camelContext;
+    private ProducerTemplate producerTemplate;
 
     public void start() throws Exception {
         HL7MessageReceiver hl7receiver = new HL7MessageReceiver();
@@ -29,7 +46,7 @@ public class HL7MessageRouter {
         hl7receiver.setLocalAddress(channel.getAddress());
 
         // Initialize Camel context and routes
-        CamelContext camelContext = initCamelContext();
+        camelContext = initCamelContext();
 
         // Start Camel context
         startCamelContext(camelContext);
@@ -45,8 +62,15 @@ public class HL7MessageRouter {
         MllpComponent mllpComponent = new MllpComponent();
         camelContext.addComponent("mllp", mllpComponent);
 
+        // Configure RabbitMQ component
+        RabbitMQComponent rabbitMQComponent = new RabbitMQComponent();
+        camelContext.addComponent("rabbitmq", rabbitMQComponent);
+
         // Add routes
         camelContext.addRoutes(createRouteBuilder());
+
+        // Create a single ProducerTemplate instance for RabbitMQ
+        producerTemplate = camelContext.createProducerTemplate();
 
         return camelContext;
     }
@@ -75,17 +99,20 @@ public class HL7MessageRouter {
                     .process(exchange -> {
                         String hl7Message = exchange.getIn().getBody(String.class);
                         logger.info("=**=>Incoming HL7 message:\n{}", hl7Message);
-                        
+
                         // Log generic auto-generated ACK statement
-                        logger.info("=**=>Sent MLLP_AUTO_ACKNOWLEDGEMENT message back to client");
-                                                
+                        logger.info("=**=>MLLP_AUTO_ACKNOWLEDGEMENT sent to client");
+
                         // Forward HL7 message to JGroups cluster
                         forwardHL7MessageToCluster(hl7Message);
+
+                        // Publish HL7 message to RabbitMQ
+                        sendHL7MessageToRabbitMQ(hl7Message, exchange);
                     });
             }
         };
     }
-   
+
     private void forwardHL7MessageToCluster(String hl7Message) {
         try {
             Message jgroupsMessage = new ObjectMessage(null, hl7Message);
@@ -94,5 +121,15 @@ public class HL7MessageRouter {
             logger.error("Error forwarding HL7 message to cluster: {}", e.getMessage(), e);
         }
     }
-    
+
+    private void sendHL7MessageToRabbitMQ(String hl7Message, org.apache.camel.Exchange exchange) {
+        try {
+            producerTemplate.sendBody(RABBITMQ_URI, hl7Message);
+            String msgControlID = exchange.getIn().getHeader(MllpConstants.MLLP_MESSAGE_CONTROL, String.class);
+            logger.info("=*=*>Message with MSH-10: {} published to queue", msgControlID);
+        } catch (Exception e) {
+            logger.error("Error sending HL7 message to RabbitMQ: {}", e.getMessage(), e);
+        }
+    }
+
 }
