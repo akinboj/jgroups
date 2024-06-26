@@ -61,6 +61,12 @@
 	    <artifactId>camel-mllp</artifactId>
 	    <version>${version-org.apache.camel}</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.camel/camel-hl7 -->
+	<dependency>
+	    <groupId>org.apache.camel</groupId>
+	    <artifactId>camel-hl7</artifactId>
+	    <version>${version-org.apache.camel}</version>
+	</dependency>
 	<!-- https://mvnrepository.com/artifact/org.apache.camel/camel-rabbitmq -->
 	<dependency>
 	    <groupId>org.apache.camel</groupId>

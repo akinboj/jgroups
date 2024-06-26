@@ -3,6 +3,8 @@ package net.development.jgroupshl7.server;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.hl7.HL7;
+import org.apache.camel.component.hl7.HL7DataFormat;
 import org.apache.camel.component.mllp.MllpComponent;
 import org.apache.camel.component.mllp.MllpConstants;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -94,21 +96,29 @@ public class HL7MessageRouter {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // Route to receive HL7 messages over MLLP with auto acknowledgment
+                // Route to receive HL7 messages over MLLP with auto acknowledgment disabled
                 from("mllp://" + HL7_SERVER_HOST + ":" + HL7_SERVER_PORT + "?autoAck=true")
+                    .unmarshal(new HL7DataFormat()) // Unmarshal HL7 messages
                     .process(exchange -> {
                         String hl7Message = exchange.getIn().getBody(String.class);
-                        logger.info("=**=>Incoming HL7 message:\n{}", hl7Message);
-
-                        // Log generic auto-generated ACK statement
-                        logger.info("=**=>MLLP_AUTO_ACKNOWLEDGEMENT sent to client");
+                        logger.info("=**=> Incoming HL7 message:\n{}", hl7Message);
 
                         // Forward HL7 message to JGroups cluster
                         forwardHL7MessageToCluster(hl7Message);
 
                         // Publish HL7 message to RabbitMQ
                         sendHL7MessageToRabbitMQ(hl7Message, exchange);
-                    });
+                    })
+                    .transform(HL7.ack()) // Generate and transform to ACK message
+                    .process(exchange -> {
+                        // Retrieve and log the generated ACK message
+                        String ackMessage = exchange.getMessage().getBody(String.class);
+                        logger.info("=**=> Auto-generated ACK:\n{}", ackMessage);
+
+                        // Set the ACK message in the exchange properties
+                        exchange.getMessage().setHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT, ackMessage);
+                    })
+                    .marshal(new HL7DataFormat()); // Marshal ACK messages back to HL7 format
             }
         };
     }
@@ -131,5 +141,4 @@ public class HL7MessageRouter {
             logger.error("Error sending HL7 message to RabbitMQ: {}", e.getMessage(), e);
         }
     }
-
 }
